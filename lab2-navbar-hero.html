@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab 2 — Navbar & Section Héro | DevAgency</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bs-blue: #0d6efd;
+    --accent: #6610f2;
+    --dark: #0f0f1a;
+    --card-bg: #1a1a2e;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8e8f0;
+    --muted: #8888aa;
+    --success: #198754;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --info: #0dcaf0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--dark);
+    color: var(--text);
+    line-height: 1.7;
+  }
+
+  /* ── HEADER ── */
+  .lab-header {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a0a2e 50%, #0a1628 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .lab-header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(102,16,242,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .lab-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: rgba(102,16,242,0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(102,16,242,0.4);
+    padding: 0.3rem 1rem;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+  .lab-header h1 {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 0.75rem;
+  }
+  .lab-header h1 span { color: #a78bfa; }
+  .lab-header p {
+    font-size: 1.05rem;
+    color: var(--muted);
+    max-width: 600px;
+    margin: 0 auto 1.5rem;
+  }
+  .lab-meta {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    padding: 0.3rem 0.9rem;
+    border-radius: 20px;
+  }
+  .meta-chip .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── MAIN LAYOUT ── */
+  .lab-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+  }
+
+  /* ── SECTIONS ── */
+  .section {
+    margin-bottom: 3rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    background: rgba(102,16,242,0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(102,16,242,0.3);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .section-header h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  /* ── OBJECTIFS ── */
+  .objectives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .obj-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .obj-card:hover { border-color: rgba(102,16,242,0.4); }
+  .obj-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .obj-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.25rem;
+  }
+  .obj-card p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* ── CONCEPT BOXES ── */
+  .concept-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid #a78bfa;
+    border-radius: 0 12px 12px 0;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .concept-box h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #a78bfa;
+    margin-bottom: 0.5rem;
+  }
+  .concept-box p, .concept-box li {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+  .concept-box ul { padding-left: 1.2rem; }
+  .concept-box li { margin-bottom: 0.3rem; }
+  .concept-box strong { color: var(--text); }
+
+  .info-box {
+    background: rgba(13,202,240,0.07);
+    border: 1px solid rgba(13,202,240,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    color: #67e8f9;
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.6rem;
+  }
+  .warn-box {
+    background: rgba(255,193,7,0.07);
+    border: 1px solid rgba(255,193,7,0.25);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    font-size: 0.88rem;
+    color: #fde68a;
+    margin: 1rem 0;
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  /* ── CODE BLOCKS ── */
+  .code-wrapper {
+    margin: 1rem 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .code-header {
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .code-lang {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.72rem;
+    color: #a78bfa;
+    letter-spacing: 0.08em;
+  }
+  .code-copy {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.68rem;
+    background: rgba(102,16,242,0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(102,16,242,0.3);
+    padding: 0.2rem 0.7rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .code-copy:hover { background: rgba(102,16,242,0.4); }
+  .code-copy.copied { background: rgba(25,135,84,0.3); color: #4ade80; border-color: rgba(25,135,84,0.4); }
+  pre {
+    background: #0a0a14;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    margin: 0;
+  }
+  code {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.8;
+    color: #e8e8f0;
+  }
+  .c-tag    { color: #f87171; }
+  .c-attr   { color: #60a5fa; }
+  .c-val    { color: #4ade80; }
+  .c-class  { color: #fbbf24; }
+  .c-comment{ color: #6b7280; font-style: italic; }
+  .c-str    { color: #a78bfa; }
+
+  /* ── ÉTAPES ── */
+  .steps-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .step-item {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    transition: border-color 0.2s;
+  }
+  .step-item:hover { border-color: rgba(102,16,242,0.3); }
+  .step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #a78bfa;
+    background: rgba(102,16,242,0.15);
+    border: 1px solid rgba(102,16,242,0.3);
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .step-content h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.3rem;
+  }
+  .step-content p {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ── EXERCICES ── */
+  .exercise-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+  .ex-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .ex-header {
+    padding: 0.75rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .ex-letter {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(102,16,242,0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(102,16,242,0.3);
+    width: 26px; height: 26px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ex-header h4 { font-size: 0.9rem; font-weight: 600; color: #fff; }
+  .ex-body { padding: 1rem 1.1rem; }
+  .ex-body p { font-size: 0.83rem; color: var(--muted); margin-bottom: 0.75rem; }
+
+  /* ── CHECKLIST ── */
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.87rem;
+    color: var(--muted);
+  }
+  .check-icon { color: #22c55e; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── FOOTER ── */
+  .lab-footer {
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 3rem;
+  }
+  .footer-left {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .footer-left span { color: #a78bfa; }
+  .next-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(102,16,242,0.2);
+    color: #a78bfa;
+    border: 1px solid rgba(102,16,242,0.4);
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-family: 'Space Mono', monospace;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .next-btn:hover { background: rgba(102,16,242,0.35); color: #c4b5fd; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-wrap {
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid var(--border);
+    padding: 0.6rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+  .progress-track {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 33.3%;
+    background: linear-gradient(90deg, #6610f2, #a78bfa);
+    border-radius: 2px;
+  }
+  .progress-steps {
+    display: flex;
+    gap: 0.35rem;
+  }
+  .p-step {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .p-step.active { background: rgba(102,16,242,0.3); color: #a78bfa; border-color: rgba(102,16,242,0.5); }
+  .p-step.done { background: rgba(25,135,84,0.2); color: #4ade80; border-color: rgba(25,135,84,0.4); }
+
+  /* ── COMPONENT DISPLAY ── */
+  .component-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+</style>
+</head>
+<body>
+
+<!-- ── PROGRESS ── -->
+<div class="progress-bar-wrap">
+  <span class="progress-label">Progression Labs</span>
+  <div class="progress-track"><div class="progress-fill"></div></div>
+  <div class="progress-steps">
+    <div class="p-step done">1</div>
+    <div class="p-step active">2</div>
+    <div class="p-step">3</div>
+    <div class="p-step">4</div>
+    <div class="p-step">5</div>
+    <div class="p-step">6</div>
+  </div>
+</div>
+
+<!-- ── HEADER ── -->
+<header class="lab-header">
+  <div class="lab-badge">Master 1 Informatique · 2025–2026</div>
+  <h1>Lab 2 — <span>Navbar & Section Héro</span></h1>
+  <p>Enrichissez votre projet DevAgency avec une navbar responsive et une section héro professionnelle.</p>
+  <div class="lab-meta">
+    <div class="meta-chip"><span class="dot"></span>Durée : 25 min</div>
+    <div class="meta-chip">🎯 Niveau : Débutant</div>
+    <div class="meta-chip">📁 Fichier : index.html (Lab 1 modifié)</div>
+    <div class="meta-chip">🔗 data-bs-toggle & data-bs-target</div>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="lab-container">
+
+  <!-- OBJECTIFS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>Objectifs du Lab</h2>
+    </div>
+    <div class="objectives-grid">
+      <div class="obj-card">
+        <div class="obj-icon">🍔</div>
+        <div>
+          <h4>Navbar responsive</h4>
+          <p>Créer une navigation qui devient un hamburger sur mobile grâce à .navbar-expand-lg</p>
+        </div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon">🎯</div>
+        <div>
+          <h4>Section Héro</h4>
+          <p>Concevoir une zone d'accroche avec titre, sous-titre et boutons CTA (appels à l'action)</p>
+        </div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon">🎛️</div>
+        <div>
+          <h4>Attributs data-bs-*</h4>
+          <p>Utiliser data-bs-toggle et data-bs-target pour activer le menu hamburger sans JavaScript</p>
+        </div>
+      </div>
+      <div class="obj-card">
+        <div class="obj-icon">🚀</div>
+        <div>
+          <h4>Intégrer à DevAgency</h4>
+          <p>Remplacer la navbar simple du Lab 1 par une vraie navbar professionnelle avec menu</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONCEPT : NAVBAR -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>Concept — La Navbar Bootstrap</h2>
+    </div>
+    <div class="concept-box">
+      <h3>Qu'est-ce qu'une Navbar ?</h3>
+      <p>La navbar est la barre de navigation en haut d'une page. Bootstrap fournit une navbar <strong>responsive</strong> qui se transforme automatiquement en hamburger sur mobile (breakpoint configurable).</p>
+    </div>
+
+    <div class="concept-box">
+      <h3>Anatomie de la Navbar</h3>
+      <p>Voici la structure obligatoire :</p>
+      <ul style="margin-top:0.5rem">
+        <li><strong>.navbar</strong> → conteneur principal</li>
+        <li><strong>.navbar-brand</strong> → logo / nom du site</li>
+        <li><strong>.navbar-toggler</strong> → bouton hamburger (visible sur mobile)</li>
+        <li><strong>.navbar-collapse</strong> → conteneur du menu (se cache sur mobile)</li>
+        <li><strong>.navbar-nav</strong> → liste des liens de navigation</li>
+      </ul>
+    </div>
+
+    <div class="info-box">
+      💡 <span><strong>Mobile-First :</strong> Sur les petits écrans, le menu est caché par défaut. En cliquant sur ☰ (hamburger), il s'ouvre. Sur desktop, le menu est toujours visible.</span>
+    </div>
+
+    <div class="code-wrapper">
+      <div class="code-header">
+        <span class="code-lang">HTML — Structure de base</span>
+        <button class="code-copy" onclick="copyCode(this,'nav-struct')">Copier</button>
+      </div>
+      <pre><code id="nav-struct"><span class="c-tag">&lt;nav</span> <span class="c-attr">class=</span><span class="c-val">"navbar navbar-expand-lg navbar-dark bg-dark"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"container"</span><span class="c-tag">&gt;</span>
+    <span class="c-comment">&lt;!-- Logo --&gt;</span>
+    <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"navbar-brand fw-bold"</span> <span class="c-attr">href=</span><span class="c-val">"#"</span><span class="c-tag">&gt;</span>🚀 DevAgency<span class="c-tag">&lt;/a&gt;</span>
+
+    <span class="c-comment">&lt;!-- Bouton hamburger (visible que sur mobile) --&gt;</span>
+    <span class="c-tag">&lt;button</span> <span class="c-attr">class=</span><span class="c-val">"navbar-toggler"</span> <span class="c-attr">type=</span><span class="c-val">"button"</span>
+            <span class="c-attr">data-bs-toggle=</span><span class="c-val">"collapse"</span>
+            <span class="c-attr">data-bs-target=</span><span class="c-val">"#navMenu"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;span</span> <span class="c-attr">class=</span><span class="c-val">"navbar-toggler-icon"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+    <span class="c-tag">&lt;/button&gt;</span>
+
+    <span class="c-comment">&lt;!-- Menu (se cache sur mobile) --&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"collapse navbar-collapse"</span> <span class="c-attr">id=</span><span class="c-val">"navMenu"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;ul</span> <span class="c-attr">class=</span><span class="c-val">"navbar-nav ms-auto"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;li</span> <span class="c-attr">class=</span><span class="c-val">"nav-item"</span><span class="c-tag">&gt;</span>
+          <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"nav-link active"</span> <span class="c-attr">href=</span><span class="c-val">"#"</span><span class="c-tag">&gt;</span>Accueil<span class="c-tag">&lt;/a&gt;</span>
+        <span class="c-tag">&lt;/li&gt;</span>
+        <span class="c-tag">&lt;li</span> <span class="c-attr">class=</span><span class="c-val">"nav-item"</span><span class="c-tag">&gt;</span>
+          <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"nav-link"</span> <span class="c-attr">href=</span><span class="c-val">"#services"</span><span class="c-tag">&gt;</span>Services<span class="c-tag">&lt;/a&gt;</span>
+        <span class="c-tag">&lt;/li&gt;</span>
+      <span class="c-tag">&lt;/ul&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+<span class="c-tag">&lt;/nav&gt;</span></code></pre>
+    </div>
+
+    <div class="warn-box">
+      ⚠️ <span><strong>Important :</strong> La valeur de <strong>data-bs-target</strong> (ici "#navMenu") doit correspondre exactement à l'<strong>id</strong> du .collapse. C'est le lien entre le bouton et le menu !</span>
+    </div>
+  </section>
+
+  <!-- CONCEPT : SECTION HERO -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Concept — Section Héro</h2>
+    </div>
+    <div class="concept-box">
+      <h3>Qu'est-ce qu'une section Héro ?</h3>
+      <p>C'est la <strong>première section visible</strong> après la navbar. Elle doit capter l'attention avec :</p>
+      <ul style="margin-top:0.5rem">
+        <li>Un grand titre (h1 ou display-*)</li>
+        <li>Un sous-titre (lead)</li>
+        <li>Un ou plusieurs boutons d'action (CTA = Call To Action)</li>
+        <li>Éventuellement : une image, un dégradé, des icônes</li>
+      </ul>
+    </div>
+
+    <div class="concept-box">
+      <h3>Structure & Classes Bootstrap</h3>
+      <p style="margin-bottom:0.5rem">Voici les classes clés :</p>
+      <ul>
+        <li><strong>.display-4 / .display-5</strong> → très grands titres</li>
+        <li><strong>.lead</strong> → paragraphe mis en avant (1.25rem)</li>
+        <li><strong>.btn btn-primary / btn-outline-light</strong> → boutons d'action</li>
+        <li><strong>.fw-bold</strong> → gras (font-weight: bold)</li>
+        <li><strong>.text-center</strong> → centrer le texte</li>
+        <li><strong>.bg-dark</strong> → fond sombre</li>
+        <li><strong>.py-5</strong> → padding vertical</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- CODE COMPLET LAB 2 -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Code Complet — Navbar + Héro</h2>
+    </div>
+    <p style="font-size:0.9rem;color:var(--muted);margin-bottom:1rem;">Remplacez votre Lab 1 par ce code. La navbar et la section héro s'ajoutent avant les exemples de grille.</p>
+
+    <div class="code-wrapper">
+      <div class="code-header">
+        <span class="code-lang">index.html — Lab 2 complet</span>
+        <button class="code-copy" onclick="copyCode(this,'full-lab2')">📋 Copier tout</button>
+      </div>
+      <pre><code id="full-lab2"><span class="c-comment">&lt;!-- ════════════════════════════════════════
+     LAB 2 — NAVBAR & SECTION HÉRO
+     DevAgency — Master 1 Informatique 2025-26
+     ════════════════════════════════════════ --&gt;</span>
+<span class="c-tag">&lt;!DOCTYPE html&gt;</span>
+<span class="c-tag">&lt;html</span> <span class="c-attr">lang=</span><span class="c-val">"fr"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;head&gt;</span>
+  <span class="c-tag">&lt;meta</span> <span class="c-attr">charset=</span><span class="c-val">"UTF-8"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;meta</span> <span class="c-attr">name=</span><span class="c-val">"viewport"</span> <span class="c-attr">content=</span><span class="c-val">"width=device-width, initial-scale=1.0"</span><span class="c-tag">&gt;</span>
+  <span class="c-tag">&lt;title&gt;</span>DevAgency — Lab 2<span class="c-tag">&lt;/title&gt;</span>
+  <span class="c-tag">&lt;link</span> <span class="c-attr">rel=</span><span class="c-val">"stylesheet"</span>
+        <span class="c-attr">href=</span><span class="c-val">"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"</span><span class="c-tag">&gt;</span>
+<span class="c-tag">&lt;/head&gt;</span>
+<span class="c-tag">&lt;body&gt;</span>
+
+  <span class="c-comment">&lt;!-- ════ NAVBAR RESPONSIVE ════ --&gt;</span>
+  <span class="c-tag">&lt;nav</span> <span class="c-attr">class=</span><span class="c-val">"navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"container"</span><span class="c-tag">&gt;</span>
+      <span class="c-comment">&lt;!-- Logo --&gt;</span>
+      <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"navbar-brand fw-bold fs-5"</span> <span class="c-attr">href=</span><span class="c-val">"#"</span><span class="c-tag">&gt;</span>🚀 DevAgency<span class="c-tag">&lt;/a&gt;</span>
+
+      <span class="c-comment">&lt;!-- Hamburger button --&gt;</span>
+      <span class="c-tag">&lt;button</span> <span class="c-attr">class=</span><span class="c-val">"navbar-toggler"</span> <span class="c-attr">type=</span><span class="c-val">"button"</span>
+              <span class="c-attr">data-bs-toggle=</span><span class="c-val">"collapse"</span> <span class="c-attr">data-bs-target=</span><span class="c-val">"#navMenu"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;span</span> <span class="c-attr">class=</span><span class="c-val">"navbar-toggler-icon"</span><span class="c-tag">&gt;&lt;/span&gt;</span>
+      <span class="c-tag">&lt;/button&gt;</span>
+
+      <span class="c-comment">&lt;!-- Menu links --&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"collapse navbar-collapse"</span> <span class="c-attr">id=</span><span class="c-val">"navMenu"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;ul</span> <span class="c-attr">class=</span><span class="c-val">"navbar-nav ms-auto gap-3"</span><span class="c-tag">&gt;</span>
+          <span class="c-tag">&lt;li</span> <span class="c-attr">class=</span><span class="c-val">"nav-item"</span><span class="c-tag">&gt;</span>
+            <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"nav-link active"</span> <span class="c-attr">href=</span><span class="c-val">"#"</span><span class="c-tag">&gt;</span>Accueil<span class="c-tag">&lt;/a&gt;</span>
+          <span class="c-tag">&lt;/li&gt;</span>
+          <span class="c-tag">&lt;li</span> <span class="c-attr">class=</span><span class="c-val">"nav-item"</span><span class="c-tag">&gt;</span>
+            <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"nav-link"</span> <span class="c-attr">href=</span><span class="c-val">"#services"</span><span class="c-tag">&gt;</span>Services<span class="c-tag">&lt;/a&gt;</span>
+          <span class="c-tag">&lt;/li&gt;</span>
+          <span class="c-tag">&lt;li</span> <span class="c-attr">class=</span><span class="c-val">"nav-item"</span><span class="c-tag">&gt;</span>
+            <span class="c-tag">&lt;a</span> <span class="c-attr">class=</span><span class="c-val">"nav-link"</span> <span class="c-attr">href=</span><span class="c-val">"#contact"</span><span class="c-tag">&gt;</span>Contact<span class="c-tag">&lt;/a&gt;</span>
+          <span class="c-tag">&lt;/li&gt;</span>
+        <span class="c-tag">&lt;/ul&gt;</span>
+        <span class="c-comment">&lt;!-- CTA button --&gt;</span>
+        <span class="c-tag">&lt;a</span> <span class="c-attr">href=</span><span class="c-val">"#"</span> <span class="c-attr">class=</span><span class="c-val">"btn btn-outline-light btn-sm ms-3"</span><span class="c-tag">&gt;</span>Devis<span class="c-tag">&lt;/a&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/nav&gt;</span>
+
+  <span class="c-comment">&lt;!-- ════ SECTION HÉRO ════ --&gt;</span>
+  <span class="c-tag">&lt;section</span> <span class="c-attr">class=</span><span class="c-val">"bg-dark text-white py-5 mt-5"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"container"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"row align-items-center g-4"</span><span class="c-tag">&gt;</span>
+        <span class="c-comment">&lt;!-- Texte héro --&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"col-lg-7"</span><span class="c-tag">&gt;</span>
+          <span class="c-tag">&lt;h1</span> <span class="c-attr">class=</span><span class="c-val">"display-5 fw-bold mb-3"</span><span class="c-tag">&gt;</span>
+            Nous créons des sites qui <span class="c-tag">&lt;span</span> <span class="c-attr">class=</span><span class="c-val">"text-primary"</span><span class="c-tag">&gt;</span>convertissent<span class="c-tag">&lt;/span&gt;</span>
+          <span class="c-tag">&lt;/h1&gt;</span>
+          <span class="c-tag">&lt;p</span> <span class="c-attr">class=</span><span class="c-val">"lead text-secondary mb-4"</span><span class="c-tag">&gt;</span>
+            DevAgency utilise Bootstrap pour livrer des interfaces web modernes, responsive et accessibles.
+          <span class="c-tag">&lt;/p&gt;</span>
+          <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"d-flex gap-3 flex-wrap"</span><span class="c-tag">&gt;</span>
+            <span class="c-tag">&lt;a</span> <span class="c-attr">href=</span><span class="c-val">"#services"</span> <span class="c-attr">class=</span><span class="c-val">"btn btn-primary btn-lg"</span><span class="c-tag">&gt;</span>Nos Services<span class="c-tag">&lt;/a&gt;</span>
+            <span class="c-tag">&lt;a</span> <span class="c-attr">href=</span><span class="c-val">"#contact"</span> <span class="c-attr">class=</span><span class="c-val">"btn btn-outline-light btn-lg"</span><span class="c-tag">&gt;</span>Contactez-nous<span class="c-tag">&lt;/a&gt;</span>
+          <span class="c-tag">&lt;/div&gt;</span>
+        <span class="c-tag">&lt;/div&gt;</span>
+
+        <span class="c-comment">&lt;!-- Image héro --&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"col-lg-5 text-center"</span><span class="c-tag">&gt;</span>
+          <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"bg-primary rounded-4 p-5"</span><span class="c-tag">&gt;</span>
+            <span class="c-tag">&lt;span</span> <span class="c-attr">style=</span><span class="c-val">"font-size:6rem"</span><span class="c-tag">&gt;</span>💻<span class="c-tag">&lt;/span&gt;</span>
+          <span class="c-tag">&lt;/div&gt;</span>
+        <span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/section&gt;</span>
+
+  <span class="c-comment">&lt;!-- ════ CONTENU DU LAB 1 (grille) ════ --&gt;</span>
+  <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"container mt-4 mb-5"</span><span class="c-tag">&gt;</span>
+    <span class="c-tag">&lt;h2</span> <span class="c-attr">class=</span><span class="c-val">"mb-4 fw-bold"</span><span class="c-tag">&gt;</span>🏗️ Grille Bootstrap<span class="c-tag">&lt;/h2&gt;</span>
+
+    <span class="c-comment">&lt;!-- 3 colonnes --&gt;</span>
+    <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"row g-3 mb-4"</span><span class="c-tag">&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"col-md-4"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"p-3 bg-primary text-white rounded text-center"</span><span class="c-tag">&gt;</span>col-md-4<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"col-md-4"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"p-3 bg-success text-white rounded text-center"</span><span class="c-tag">&gt;</span>col-md-4<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"col-md-4"</span><span class="c-tag">&gt;</span>
+        <span class="c-tag">&lt;div</span> <span class="c-attr">class=</span><span class="c-val">"p-3 bg-danger text-white rounded text-center"</span><span class="c-tag">&gt;</span>col-md-4<span class="c-tag">&lt;/div&gt;</span>
+      <span class="c-tag">&lt;/div&gt;</span>
+    <span class="c-tag">&lt;/div&gt;</span>
+  <span class="c-tag">&lt;/div&gt;</span>
+
+  <span class="c-comment">&lt;!-- ✅ Bootstrap JS --&gt;</span>
+  <span class="c-tag">&lt;script</span> <span class="c-attr">src=</span><span class="c-val">"https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"</span><span class="c-tag">&gt;&lt;/script&gt;</span>
+<span class="c-tag">&lt;/body&gt;</span>
+<span class="c-tag">&lt;/html&gt;</span></code></pre>
+    </div>
+  </section>
+
+  <!-- EXPLICATIONS PAR LIGNE -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Explications — Ligne par Ligne</h2>
+    </div>
+
+    <div class="concept-box">
+      <h3>🍔 Le Navbar Toggler</h3>
+      <p><code style="background:rgba(255,255,255,0.1);padding:0.1rem 0.4rem;border-radius:4px">data-bs-toggle="collapse" data-bs-target="#navMenu"</code></p>
+      <p style="margin-top:0.5rem">Ces deux attributs disent à Bootstrap : "Quand on clique sur ce bouton, basculez la visibilité de l'élément avec id='navMenu'".</p>
+      <p style="color:#fde68a;margin-top:0.5rem;font-size:0.88rem">❗ Si l'id du .collapse est "#navMenu", alors data-bs-target DOIT être "#navMenu" aussi !</p>
+    </div>
+
+    <div class="concept-box">
+      <h3>📱 fixed-top</h3>
+      <p>La classe <strong>.fixed-top</strong> colle la navbar en haut lors du scroll. C'est pourquoi on ajoute <strong>.mt-5</strong> à la section suivante — pour éviter que la navbar cache le contenu.</p>
+    </div>
+
+    <div class="concept-box">
+      <h3>📐 align-items-center</h3>
+      <p>Aligne verticalement le contenu du row. Ici, le texte et l'image de la héro sont centrés vertiquement l'un par rapport à l'autre.</p>
+    </div>
+
+    <div class="concept-box">
+      <h3>🎨 display-5 & lead</h3>
+      <p><strong>.display-5</strong> crée un très grand titre (3rem environ). <strong>.lead</strong> agrandit un paragraphe pour le mettre en avant (1.25rem).</p>
+    </div>
+
+    <div class="concept-box">
+      <h3>🔘 d-flex & gap-3</h3>
+      <p><strong>.d-flex</strong> transforme un div en flexbox. <strong>.gap-3</strong> ajoute de l'espace entre les boutons. <strong>.flex-wrap</strong> permet aux boutons de passer à la ligne sur mobile.</p>
+    </div>
+  </section>
+
+  <!-- ÉTAPES -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Comment faire — Étape par étape</h2>
+    </div>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h4>Ouvrir votre Lab 1</h4>
+          <p>Ouvrez le fichier index.html du Lab 1 dans VS Code ou Notepad++.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h4>Remplacer le code</h4>
+          <p>Sélectionnez tout le contenu <span class="c-tag">&lt;body&gt;</span> et remplacez-le par le code complet du Lab 2 ci-dessus.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h4>Sauvegarder & tester</h4>
+          <p>Sauvegardez avec Ctrl+S. Ouvrez la page dans Chrome. La navbar doit être en haut, la héro en dessous.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h4>Tester le hamburger</h4>
+          <p>Appuyez sur F12. Cliquez sur l'icône mobile pour réduire la fenêtre à 375px. Vous devez voir ☰ à la place du menu.</p>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">05</div>
+        <div class="step-content">
+          <h4>Cliquer sur le hamburger</h4>
+          <p>Cliquez sur ☰. Le menu doit s'ouvrir / se fermer. Si c'est le cas, <strong>Lab 2 est terminé !</strong></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXERCICES BONUS -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Exercices — Si vous avez terminé avant les autres</h2>
+    </div>
+    <div class="exercise-grid">
+      <div class="ex-card">
+        <div class="ex-header">
+          <div class="ex-letter">A</div>
+          <h4>Changer les couleurs</h4>
+        </div>
+        <div class="ex-body">
+          <p>Changez <strong>bg-dark</strong> en <strong>bg-primary</strong> pour la navbar. Changez aussi le héro section de bg-dark en bg-secondary. Testez avec différentes couleurs !</p>
+        </div>
+      </div>
+      <div class="ex-card">
+        <div class="ex-header">
+          <div class="ex-letter">B</div>
+          <h4>Ajouter des liens</h4>
+        </div>
+        <div class="ex-body">
+          <p>Ajoutez 2 nouveaux liens au menu de la navbar : "À propos" et "Portfolio". Vérifiez qu'ils s'affichent bien sur desktop et se cachent bien sur mobile.</p>
+        </div>
+      </div>
+      <div class="ex-card">
+        <div class="ex-header">
+          <div class="ex-letter">C</div>
+          <h4>Modifier le breakpoint</h4>
+        </div>
+        <div class="ex-body">
+          <p>Changez <strong>navbar-expand-lg</strong> en <strong>navbar-expand-md</strong>. Observez : maintenant le hamburger apparaît plus tôt (à partir de 768px au lieu de 992px).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CHECKLIST -->
+  <section class="section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Checklist de Validation</h2>
+    </div>
+    <div class="concept-box">
+      <h3>Avant de passer au Lab 3, vérifiez que vous savez :</h3>
+      <div class="checklist" style="margin-top:0.75rem">
+        <div class="check-item"><span class="check-icon">✓</span><span>Créer une navbar responsive avec .navbar-expand-lg</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Utiliser data-bs-toggle="collapse" et data-bs-target</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Comprendre que l'id du .collapse doit correspondre au data-bs-target</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Créer une section Héro avec titre, sous-titre et boutons CTA</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Utiliser .display-5, .lead, .btn-primary, .btn-outline-light</span></div>
+        <div class="check-item"><span class="check-icon">✓</span><span>Tester le responsive sur mobile avec les DevTools</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ── FOOTER ── -->
+<footer class="lab-footer">
+  <div class="footer-left">
+    <span>DevAgency</span> · Master 1 Informatique 2025–2026 · Lab 2 / 6
+  </div>
+  <div style="display:flex;gap:0.75rem;align-items:center">
+    <span style="font-size:0.8rem;color:var(--muted)">Prochain lab :</span>
+    <div class="next-btn">Lab 3 — Cards & Formulaires →</div>
+  </div>
+</footer>
+
+<script>
+function copyCode(btn, id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const text = el.innerText || el.textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copié !';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'Copier';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
